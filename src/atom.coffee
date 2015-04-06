@@ -412,10 +412,19 @@ class Atom extends Model
   open: (options) ->
     ipc.send('open', options)
 
-  # Extended: Show the native dialog to prompt the user to select a folder.
+  # Extended: Add a new root folder to the current project.
   #
-  # * `callback` A {Function} to call once the user has selected a folder.
-  #   * `path` {String} the path to the folder the user selected.
+  # This will display a dialog that allows the user to select one or more
+  # folders to add.
+  addRootFolder: ->
+    @pickFolder (selectedPaths = []) =>
+      @project.addPath(selectedPath) for selectedPath in selectedPaths
+
+  # Extended: Prompt the user to select one or more folders.
+  #
+  # * `callback` A {Function} to call once the user has confirmed the selection.
+  #   * `paths` An {Array} of {String} paths that the user selected, or `null`
+  #     if the user dismissed the dialog.
   pickFolder: (callback) ->
     responseChannel = "atom-pick-folder-response"
     ipc.on responseChannel, (path) ->
